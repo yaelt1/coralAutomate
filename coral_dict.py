@@ -2,21 +2,26 @@ import googletrans
 from googletrans import Translator
 
 coral_dict = { }
-coral_dict["מסוף כימיקלים צפון"]= "Chemical north terminal"
-coral_dict["מספנות ישראל"]= "Haifa Shipyard Port"
-coral_dict["חיפה"]= "Haifa"
-coral_dict["ממגורות חיפה"]= "Gadot Terminal"
-coral_dict["המפרץ"]= "Gulf port"
-coral_dict["הדרום"]= "South port"
-coral_dict["אשדוד"]= "Ashdod"
-coral_dict["אילת"]= "Eilat"
 coral_dict["מתכות"]= "Steel"
 coral_dict["מטען כללי"]= "General Cargo"
-coral_dict["צוברים"]= "Grain"
-coral_dict["רכב מוביל"]= "leading vehicle"
+coral_dict["צוברים"]= "Bulk"
+coral_dict["רכב מוביל"]= "Roro"
+coral_dict["מכולות"]= "Containers"
+coral_dict["תאית"]= "Wood Pulp"
+coral_dict["כלי רכב"]= "Roro"
+coral_dict["שקים"]= "Bags"
+coral_dict["עץ נסור"]= "Sawn Wood"
+coral_dict["VEHICLE"]= "Roro"
+coral_dict["CONTAINER"]= "Containers"
+coral_dict["GENERAL CARGO"]= "General Cargo"
 
-def uni_trans(word):
+
+def dict_trans(word):
+  if word in coral_dict.keys():
+    return coral_dict.get(word, word)
+  else:
     translator = Translator()
     translated = translator.translate(word, dest="en")
     return translated.text
+
 
