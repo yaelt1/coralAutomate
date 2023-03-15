@@ -1,5 +1,3 @@
-import googletrans
-from googletrans import Translator
 
 coral_dict = { }
 coral_dict["מתכות"]= "Steel"
@@ -20,8 +18,6 @@ def dict_trans(word):
   if word in coral_dict.keys():
     return coral_dict.get(word, word)
   else:
-    translator = Translator()
-    translated = translator.translate(word, dest="en")
-    return translated.text
+    return word
 
 
