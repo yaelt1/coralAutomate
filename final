@@ -1,0 +1,173 @@
+import pandas as pd
+import time
+import datetime
+import xlsxwriter
+from datetime import datetime
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+import os
+from coral_dict import dict_trans
+import shutil
+
+
+def main():
+  return exportData1()
+
+
+def open_click():
+  chrome_options = Options()
+  chrome_options.add_argument('--no-sandbox')
+  chrome_options.add_argument('--disable-dev-shm-usage')
+  driver = webdriver.Chrome(options=chrome_options)  #opens chrome
+  driver.get(r"https://israports.co.il/en/IPCS/Pages/shippingschedule.aspx"
+             )  #opens website
+  time.sleep(10)
+  #print("after sleep")
+  
+  try:
+    wait = WebDriverWait(driver, 30)
+    element = wait.until(EC.element_to_be_clickable((By.XPATH, "/html/body/form/div[4]/div/main/span/div[1]/div/div/div/div/div[1]/div[2]/div/div/div/div/div[2]/div[1]/button[1]")))
+    element.click()
+    #time.sleep(5)
+  except Exception as e:
+        print("Element not found: ", e)
+        open_click()
+  driver.close()
+
+
+
+def filterData(df):
+  df1 = df[df['Status'] == "ShipsOnBerth"]
+  df1 = df1[df1['CARGO_TYPE_ARR'] != 'נוסעים']
+  df1 = df1[df1['CARGO_TYPE_ARR'] != 'מכולות']
+  df1 = df1.dropna(subset=['CARGO_TYPE_ARR'])
+
+  df1.rename(columns={
+    'Ship_x0020_Name_x002f_Number': 'VESSEL',
+    "Ports": "PORT",
+    "ARR_DTE_TIME": "Arrival Date",
+    "CARGO_TYPE_ARR": "Cargo Type"
+  },
+             inplace=True)
+  df1 = df1[["PORT", "VESSEL", "Cargo Type", "Arrival Date"]]
+  df1 = df1.sort_values(by=["Arrival Date"])
+  for col in ["Cargo Type"]:
+    for index, row in df1.iterrows():
+      words = row[col]
+      translated_words = []
+      translated_words.append(dict_trans(words))
+      translated_text = " ".join(translated_words)
+      df1.at[index, col] = translated_text
+  
+  for name in ["VESSEL"]:
+     for index, row in df1.iterrows():
+       cur = row[name]
+       n= len(cur)
+       cur = cur[:n-6]
+       df1.at[index, name] = cur
+  df1["Quantity"] = ["-" for i in df1["VESSEL"]]
+  return df1
+
+
+
+def exportData1():
+  now = datetime.now()
+  d3 = now.strftime("%d-%m-%Y %H-%M-%S")
+  try:
+  #  print("first try")
+    open_click()
+  except:
+   # print("second try")
+    open_click()
+
+  os.chdir(r'/home/runner/Downloads')
+  while "IPCS-VesselSchedule.xlsx" not in os.listdir(r'/home/runner/Downloads'):
+    time.sleep(5)
+ # print("out of loop")
+
+  old_file_name = r'/home/runner/Downloads/IPCS-VesselSchedule.xlsx'
+  new_file_name = r"/home/runner/coral/Docs/" + d3 + ".xlsx"
+  #moving files
+  shutil.move(old_file_name, new_file_name)
+  writingData(new_file_name, d3)
+
+
+
+def writingData(new_file_name, d3):
+  df = pd.read_excel(new_file_name)
+  df1 = filterData(df)
+
+  df1 = df1.groupby(["PORT"])
+  workbook = xlsxwriter.Workbook(  r"/home/runner/coral/ship_status/" + "ship_status_" + d3 + ".xlsx", {'in_memory': True})
+  worksheet = workbook.add_worksheet()
+ 
+  colors = ['blue', 'red', "purple", "green", "orange", "aqua", "black"]
+  table_style = [
+    'Table Style Light 9', 'Table Style Light 10', 'Table Style Light 12',
+    'Table Style Light 11', 'Table Style Light 14', 'Table Style Light 13',
+    'Table Style Light 8'
+  ]
+  main_header = "Vessels Status - Israeli Ports"
+  main = workbook.add_format()
+  main.set_font_size(48)
+  main.set_bold()
+  worksheet.write('E8', main_header, main)
+
+  prev = 0
+  ports = [x for x in df1.groups]
+  for i in range(len(df1.groups)):
+    group = ports[i]
+    print(group)
+    new = pd.DataFrame(df1.get_group(group).reset_index(drop=True))
+
+    # converting to dataframe and adding "No" col
+    df_x = new  #only one group
+    df_x["No"] = [i + 1 for i in range(len(df_x))]
+    df_x = df_x[["No", "VESSEL", "Cargo Type", "Arrival Date", "Quantity"]]
+    n = len(df_x)
+    #adding caption for every table
+    caption = group[0].upper() + group[1:]
+    cap_font = workbook.add_format()
+    cap_font.set_font_color(colors[i] if i<len(colors) else colors[0])
+    cap_font.set_font_size(14)
+    if i > 0:
+      index = 'C' + str(13 + prev + 2) # for caption
+      worksheet.write(index, caption, cap_font)
+    else:
+      worksheet.write('C13', caption, cap_font)
+
+    row_ater_caption = 13 + prev + 3 if i > 0 else 14
+    table_start = "A" + str(row_ater_caption)
+    table_ends = "E" + str(int(row_ater_caption + n))
+    size = table_start + ":" + table_ends
+    size_without_num = "B" + str(row_ater_caption) + ":" + table_ends
+
+    (max_row, max_col) = df_x.shape
+    table_format = workbook.add_format()
+    table_format.set_border()
+    table_format.set_center_across()
+
+    column_settings = [{
+      'header': column,
+      "format": table_format
+    } for column in df_x.columns]
+    worksheet.add_table(
+      size, {
+        "data": df_x.values.tolist(),
+        'banded_columns': False,
+        "style": table_style[i],
+        'autofilter': False,
+        'columns': column_settings,
+      })
+    worksheet.set_column(size_without_num, 22)
+    prev += n+4
+    #time.sleep(5)
+
+  #time.sleep(5)
+  workbook.close()
+  return (r"/home/runner/coral/ship_status/" + "ship_status_" + d3 + ".xlsx")
+
+print(main())
