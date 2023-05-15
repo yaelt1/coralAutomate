@@ -1,3 +1,3 @@
 # coralAutomate
-automate factoring of a daily excel sheet representing ships status at all ports of isreal.
-Imports data from israports website
+A daily automate factored excel sheet representing ships status at all ports of isreal.
+Pulls data from israports website
