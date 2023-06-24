@@ -20,31 +20,18 @@ from mail import mail_it
 
 
 def main():
-    main_folder = "Ships_Status_Folder"
-    desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
-    main_folder_path = os.path.join(desktop_path, main_folder)
-    if not os.path.exists(main_folder_path):
-        os.mkdir(main_folder_path)
-    folder_name1 = "Docs"
-    folder_name2 = "ships_status"
-    new_folder_path2 = os.path.join(main_folder_path, folder_name2)
-    new_folder_path1 = os.path.join(main_folder_path, folder_name1)
-    if not os.path.exists(new_folder_path1):
-        os.mkdir(new_folder_path1)
-    if not os.path.exists(new_folder_path2):
-        os.mkdir(new_folder_path2)
-    path = exportData1(new_folder_path1, new_folder_path2)
-    print(mail_it(path))
+    path = exportData1()
+    print(path)
+    return path
 
 def open_click():
   chrome_options = Options()
-  chrome_options.add_argument('--no-sandbox')
-  # chrome_options.add_argument('--headless')
-  chrome_options.add_argument('--disable-gpu')
-  chrome_options.add_argument('--disable-dev-shm-usage')
+#   chrome_options.add_argument('--no-sandbox')
+  chrome_options.add_argument('--headless')
+#   chrome_options.add_argument('--disable-gpu')
+#   chrome_options.add_argument('--disable-dev-shm-usage')
   driver = webdriver.Chrome(options=chrome_options)  #opens chrome
   driver.get(r"https://israports.co.il/en/IPCS/Pages/shippingschedule.aspx")  #opens website
-  time.sleep(10)
   print("after sleep")
   try:
     wait = WebDriverWait(driver, 5)
@@ -55,7 +42,8 @@ def open_click():
       )))
     element.click()
     print("clicked")
-    time.sleep(5)
+    time.sleep(2)
+    
   except Exception as e:
     print("Element not found: ", e)
     open_click()
@@ -93,7 +81,7 @@ def filterData(df):
     df1["Quantity"] = ["-" for i in df1["Vessel"]]
     return df1
 
-def exportData1(docs_path, ships_path):
+def exportData1():
     israel_tz = pytz.timezone('Israel')
     local_now = datetime.datetime.now()
     israel_now = local_now.astimezone(israel_tz)
@@ -106,26 +94,23 @@ def exportData1(docs_path, ships_path):
         print("second try")
         open_click()
     
-    home_dir = os.path.expanduser("~")
-    if os.name == "nt":  # Windows
-        downloads_file = os.path.join(home_dir, "Downloads\IPCS-VesselSchedule.xlsx")
-    elif os.name == "posix":  # macOS or Linux
-        downloads_file = os.path.join(home_dir, "Downloads\IPCS-VesselSchedule.xlsx")
-    
-    while not os.path.exists(downloads_file):
+
+    file_name = "IPCS-VesselSchedule.xlsx"
+
+    # check if file exists in directory
+    while not '../../{file_name}' :
         time.sleep(5)
     print("file in download dir")
-    new_file_name = os.path.join(docs_path, d3 + ".xlsx")
-    #moving files
-    shutil.move(downloads_file, new_file_name)
-    return writingData(new_file_name, d3, ships_path)
+    # new_file_name = os.path.join(docs_path, d3 + ".xlsx")
+    # #moving files
+    # shutil.move(downloads_file, new_file_name)
+    return writingData(file_name, d3, './')
 
-def writingData(new_file_name, d3, ship_path):
+def writingData(new_file_name, d3, destination_path):
     df = pd.read_excel(new_file_name)
     df1 = filterData(df)
-
     df1 = df1.groupby(["PORT"])
-    path = os.path.join(ship_path, "ship_status_" + d3 + ".xlsx")
+    path = os.path.join(destination_path, "ship_status_" + d3 + ".xlsx")
     workbook = xlsxwriter.Workbook(path,
         {'in_memory': True})
     worksheet = workbook.add_worksheet()
@@ -196,4 +181,7 @@ def writingData(new_file_name, d3, ship_path):
     except OSError as error:
         print(error)    
     return (path)
+
+
+
 print(main())
