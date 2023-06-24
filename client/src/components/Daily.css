@@ -1,0 +1,84 @@
+button {
+    background-color: #9a94d8;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    align-items: center;
+    /* make ir center  */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 10%;
+    margin-top: 20px;
+    border: none;
+
+    /* when stadning o it make it clickable */
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+
+}
+
+
+.button-container {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    margin-top: 100px;
+    margin-bottom: 20px;
+    margin-left: 0px;
+    margin-right: 0px;
+    text-align: center;
+    /* make it center */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+
+}
+
+
+
+p {
+    color: black;
+    font-size: 20px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    margin-top: 100px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    text-align: center;
+
+
+}
+
+h1 {
+    text-align: center;
+    color: hwb(0 2% 98%);
+    font-size: 15px;
+
+}
+
+input {
+    text-align: center;
+    font-size: 15px;
+    font-family: 'Roboto', sans-serif;
+    color: rgb(43, 46, 135);
+    margin-top: 100px;
+    margin-left: 0px;
+    margin-right: 0px;
+    /* center it */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 10%;
+    margin-top: 20px;
+    border-bottom: 2px solid #879987;
+
+
+}

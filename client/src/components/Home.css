@@ -1,0 +1,26 @@
+h1 {
+    color: rgb(140, 142, 197);
+    font-size: 50px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    margin-top: 50px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    text-align: center;
+
+}
+
+p {
+    color: rgb(43, 46, 135);
+    font-size: 20px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    text-align: center;
+
+
+}
