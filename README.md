@@ -1,10 +1,16 @@
 # coralAutomate
-JavaScrip user interface and Python based backend program that genarates an Excel sheet of all ships' status and location
-based on data from Israel Ports website - https://israports.co.il/he/Pages/Intro.aspx
+JavaScrip user interface and Python-based backend program that generates an Excel sheet of all ships' status and location
+based on data from the Israel Ports website - https://israports.co.il/he/Pages/Intro.aspx
 
-<img width="1509" alt="Screenshot 2023-06-27 at 9 53 40" src="https://github.com/yaelt1/coralAutomate/assets/116788451/b09afb7a-c43a-470d-a589-a064475b0ad2">
+The Page -
+<img width="1214" alt="Screenshot 2023-06-27 at 10 05 59" src="https://github.com/yaelt1/coralAutomate/assets/116788451/1056a593-2d04-4bd3-90c8-064940a4b69e">
 
-<img width="1512" alt="Screenshot 2023-06-27 at 9 56 03" src="https://github.com/yaelt1/coralAutomate/assets/116788451/2acbad67-1626-48eb-a7e7-591d26edab54">
+
+Sending the sheet -
+
+<img width="1214" alt="Screenshot 2023-06-27 at 10 07 21" src="https://github.com/yaelt1/coralAutomate/assets/116788451/5d8708df-781b-4705-ae7a-7081dafa82e8">
+
+![IMG-0104](https://github.com/yaelt1/coralAutomate/assets/116788451/39092ad4-3a79-4b19-a5f5-785f0f5621dc)
 
 
 The final Sheet -
